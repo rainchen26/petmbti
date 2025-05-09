@@ -9,7 +9,7 @@ export default function Header({ onStartTest }: { onStartTest?: () => void }) {
   return (
     <header className={styles.header}>
       <div className={styles.logoWrap}>
-        <Image src="/logo.svg" alt="Taily Logo" width={160} height={50} priority />
+        <Image src="/logo-new.png" alt="PetMBTI Logo" width={120} height={40} priority />
       </div>
       <nav className={styles.navbar}>
         <a className={styles.navItem} href="/">萌尾时空</a>

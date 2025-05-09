@@ -121,7 +121,6 @@
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px #fff, 0 0 2px rgba(0,0,0,0.05);
   text-align: center;
   background: transparent !important;
   border: none;
@@ -588,8 +587,8 @@
   border-radius: 0;
   box-shadow: none;
   max-width: 800px;
-  margin: 0.5rem auto 2rem auto;
-  padding: 2.5rem 2rem 2rem 2rem;
+  margin: 0 auto 2rem auto;
+  padding: 0;
   text-align: left;
   width: 100%;
 }
@@ -630,9 +629,7 @@
 
 .mbtiHeroImgWrap {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
   margin-bottom: 1.5rem;
   max-width: 800px;
   margin-left: auto;
@@ -644,8 +641,6 @@
   max-width: 800px;
   height: auto;
   border-radius: 0;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.02);
-  background: #fff;
   display: block;
 }
 
@@ -762,11 +757,10 @@
 }
 
 .pawImgBtnText {
-  color: var(--primary-color) !important;
+  color: #6b6fa7 !important;
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px var(--white), 0 0 2px rgba(0,0,0,0.05);
   text-align: center;
   background: transparent !important;
   border: none;
@@ -776,4 +770,32 @@
 
 .subNavBar {
   display: none;
+}
+
+.meteor {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #bfc2e5 0%, #6b6fa7 80%, transparent 100%);
+  border-radius: 2px;
+  opacity: 0.8;
+  animation: meteor-move 1.8s linear infinite;
+}
+@keyframes meteor-move {
+  0% {
+    transform: translateX(0) scaleX(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(40px) scaleX(1);
+    opacity: 0;
+  }
 } 

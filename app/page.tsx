@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Question from './components/Question';
 import Result from './components/Result';
@@ -73,33 +73,67 @@ const dimensionInfo = {
 export default function Home() {
   return (
     <main className={styles.main}>
-      <div style={{width: '100%', maxWidth: 800, margin: '0 auto', textAlign: 'center'}}>
-        <div style={{margin: '0 auto', width: '100%', maxWidth: 700, borderRadius: 0, overflow: 'hidden'}}>
-          <Image src="/homepage hero.png" alt="萌尾时空 hero" width={700} height={320} style={{width: '100%', height: 'auto', display: 'block', borderRadius: 0}} priority />
+      {/* Hero区+分区内容全部放在同一个section */}
+      <section style={{maxWidth: 700, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 0}}>
+        {/* Hero图 */}
+        <div style={{width: '100%', height: 320, borderRadius: 0, overflow: 'hidden', position: 'relative', margin: '0 0 24px 0'}}>
+          <Image src="/homepage hero.png" alt="萌尾时空 hero" width={700} height={320} style={{width: '100%', height: '100%', display: 'block', borderRadius: 0, objectFit: 'cover'}} priority />
+          <h1 style={{
+            position: 'absolute',
+            top: '75%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '2.1rem',
+            fontWeight: 700,
+            color: '#fff',
+            margin: 0,
+            letterSpacing: 1,
+            zIndex: 2,
+            width: '100%',
+            textAlign: 'center',
+            lineHeight: 1.2
+          }}>
+            萌尾时空｜让爱超越时间
+          </h1>
         </div>
-        <h1 style={{fontSize: '2.1rem', fontWeight: 700, color: '#6b6fa7', margin: '2.2rem 0 1.2rem 0', letterSpacing: 1}}>萌尾时空｜让爱超越时间</h1>
-        <div style={{color: '#6b6fa7', fontSize: 18, lineHeight: 2.1, fontFamily: 'Source Han Serif, Noto Serif SC, serif', maxWidth: 600, margin: '0 auto', textAlign: 'center'}}>
-          <div>亲爱的家人 你好呀</div>
-          <div>这里是萌尾时空</div>
-          <div>一个用AI科技守护每份毛孩子之爱的温暖星球</div>
-          <div>我们相信宠物不仅是生命中的过客</div>
-          <div>更是镌刻在时光里的家人</div>
-          <div>那些蹭过掌心的温度</div>
-          <div>深夜等待的小身影</div>
-          <div>调皮捣蛋的独家记忆</div>
-          <div>萌尾时空愿以AI为笔</div>
-          <div>为你和爱宠书写永不褪色的故事</div>
-          <div style={{height: '1.2em'}}></div>
-          <div>在萌尾时空</div>
-          <div>科技不是冷冰冰的代码</div>
-          <div>而是让爱流动的桥梁</div>
-          <div>因为我们和你一样坚信</div>
-          <div>真正的告别是忘记如何相爱</div>
-          <div>而这里</div>
-          <div>永远为每一份我想永远记得TA的心愿</div>
-          <div>预留一片星辰大海</div>
+        {/* 第一组 */}
+        <div style={{textAlign: 'center', color: '#6b6fa7', fontSize: 18, lineHeight: 1.6, fontFamily: 'Source Han Serif, Noto Serif SC, serif', margin: '24px 0 24px 0'}}>
+          这里是萌尾时空<br/>
+          一个用AI科技守护每份毛孩子之爱的温暖星球<br/>
+          我们相信宠物不仅是生命中的过客<br/>
+          更是镌刻在时光里的家人
         </div>
-      </div>
+        <div style={{display: 'flex', justifyContent: 'center', margin: '0'}}>
+          <Image src="/homepage1-new.png" alt="猫" width={700} height={320} style={{borderRadius: 0, objectFit: 'cover'}} />
+        </div>
+        {/* 第二组 */}
+        <div style={{textAlign: 'center', color: '#6b6fa7', fontSize: 18, lineHeight: 1.6, fontFamily: 'Source Han Serif, Noto Serif SC, serif', margin: '24px 0 24px 0'}}>
+          那些蹭过掌心的温度<br/>
+          深夜等待的小身影<br/>
+          调皮捣蛋的独家记忆<br/>
+          萌尾时空愿以AI为笔<br/>
+          为你和爱宠书写永不褪色的故事
+        </div>
+        <div style={{display: 'flex', justifyContent: 'center', margin: '0'}}>
+          <Image src="/homepage2-new.png" alt="女孩" width={700} height={320} style={{borderRadius: 0, objectFit: 'cover'}} />
+        </div>
+        {/* 第三组 */}
+        <div style={{textAlign: 'center', color: '#6b6fa7', fontSize: 18, lineHeight: 1.6, fontFamily: 'Source Han Serif, Noto Serif SC, serif', margin: '24px 0 24px 0'}}>
+          在萌尾时空<br/>
+          科技不是冷冰冰的代码<br/>
+          而是让爱流动的桥梁<br/>
+          因为我们和你一样坚信<br/>
+          真正的告别是忘记如何相爱
+        </div>
+        <div style={{display: 'flex', justifyContent: 'center', margin: '0'}}>
+          <Image src="/homepage3-new.png" alt="狗" width={700} height={320} style={{borderRadius: 0, objectFit: 'cover'}} />
+        </div>
+        <div style={{textAlign: 'center', color: '#6b6fa7', fontSize: 18, lineHeight: 1.6, fontFamily: 'Source Han Serif, Noto Serif SC, serif', margin: '24px 0 24px 0'}}>
+          而这里<br/>
+          永远为每一份我想永远记得TA的心愿<br/>
+          预留一片星辰大海
+        </div>
+      </section>
     </main>
   );
 }

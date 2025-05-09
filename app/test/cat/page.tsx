@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from '../../page.module.css';
 import { cat100Questions } from '../../data/cat100Questions';
+import { Question, DimensionType } from '../../types/mbti';
 
 const DIMENSIONS = [
   {
-    key: 'EI',
+    key: 'EI' as DimensionType,
     name: '外向(E)-内向(I)维度',
     poem: [
       '评估猫咪获取能量的方式',
@@ -28,7 +30,7 @@ const DIMENSIONS = [
     ]
   },
   {
-    key: 'SN',
+    key: 'SN' as DimensionType,
     name: '实感(S)-直觉(N)维度',
     poem: [
       '检测信息处理偏好',
@@ -50,7 +52,7 @@ const DIMENSIONS = [
     ]
   },
   {
-    key: 'TF',
+    key: 'TF' as DimensionType,
     name: '思考(T)-情感(F)维度',
     poem: [
       '分析决策机制',
@@ -70,7 +72,7 @@ const DIMENSIONS = [
     ]
   },
   {
-    key: 'JP',
+    key: 'JP' as DimensionType,
     name: '判断(J)-感知(P)维度',
     poem: [
       '考察生活方式',
@@ -103,11 +105,52 @@ export default function CatTestPage() {
   const [answers, setAnswers] = useState<number[]>([]);
   const question = cat100Questions[current];
   const dimension = getCurrentDimension(current);
+  const router = useRouter();
 
   // 进度百分比
   const percent = ((current + 1) / 100) * 100;
   // 当前维度在DIMENSIONS中的索引
   const dimIdx = DIMENSIONS.findIndex(d => d.key === dimension.key);
+
+  // 计算MBTI类型
+  const calculateMBTIType = (answers: number[]) => {
+    const scores = {
+      E: 0, I: 0,
+      S: 0, N: 0,
+      T: 0, F: 0,
+      J: 0, P: 0
+    };
+
+    // 计算每个维度的得分
+    answers.forEach((answer, index) => {
+      const question = cat100Questions[index];
+      const option = question.options[answer];
+      
+      if (index < 25) { // EI维度
+        if (option.score.E) scores.E += option.score.E;
+        if (option.score.I) scores.I += option.score.I;
+      } else if (index < 50) { // SN维度
+        if (option.score.S) scores.S += option.score.S;
+        if (option.score.N) scores.N += option.score.N;
+      } else if (index < 75) { // TF维度
+        if (option.score.T) scores.T += option.score.T;
+        if (option.score.F) scores.F += option.score.F;
+      } else { // JP维度
+        if (option.score.J) scores.J += option.score.J;
+        if (option.score.P) scores.P += option.score.P;
+      }
+    });
+
+    // 根据得分确定每个维度的类型
+    const type = [
+      scores.E > scores.I ? 'E' : 'I',
+      scores.S > scores.N ? 'S' : 'N',
+      scores.T > scores.F ? 'T' : 'F',
+      scores.J > scores.P ? 'J' : 'P'
+    ].join('');
+
+    return type;
+  };
 
   // 选项点击后自动跳到下一题并记录答案
   const handleOption = (idx: number) => {
@@ -116,8 +159,20 @@ export default function CatTestPage() {
       newAns[current] = idx;
       return newAns;
     });
+
     if (current < cat100Questions.length - 1) {
       setCurrent(current + 1);
+    } else {
+      // 测试完成，计算MBTI类型并跳转到结果页
+      const mbtiType = calculateMBTIType(answers);
+      router.push(`/result?type=${mbtiType}&testType=cat`);
+    }
+  };
+
+  // 处理上一题按钮点击
+  const handlePrev = () => {
+    if (current > 0) {
+      setCurrent(current - 1);
     }
   };
 
@@ -133,6 +188,27 @@ export default function CatTestPage() {
         <span style={{position: 'absolute', left: 0, top: -32, fontWeight: 700, color: '#6b6fa7', fontSize: 18}}>
           {String(current + 1).padStart(2, '0')}/100
         </span>
+        {/* 上一题按钮 */}
+        {current > 0 && (
+          <button
+            onClick={handlePrev}
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: -32,
+              background: 'none',
+              border: 'none',
+              color: '#6b6fa7',
+              fontSize: 16,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
+            }}
+          >
+            ← 上一题
+          </button>
+        )}
         <div style={{display: 'flex', height: 12, background: '#f0f0f0', borderRadius: 8, overflow: 'hidden', position: 'relative'}}>
           {/* 分隔节点 - 小猫头像 */}
           {[25, 50, 75].map((pos) => (
@@ -198,36 +274,50 @@ export default function CatTestPage() {
                 background: answers[current] === idx ? '#ccd3ee' : '#fff',
                 border: '1.5px solid #ccd3ee',
                 borderRadius: 8,
-                padding: '0.9em 1.2em',
-                color: '#6b6fa7',
-                fontWeight: answers[current] === idx ? 700 : 500,
+                padding: '1rem 1.2rem',
                 fontSize: 16,
-                cursor: 'pointer',
+                color: '#6b6fa7',
                 textAlign: 'left',
-                transition: 'all 0.2s ease',
-                boxShadow: answers[current] === idx ? '0 2px 8px rgba(108, 111, 167, 0.2)' : 'none',
-                transform: answers[current] === idx ? 'translateY(-1px)' : 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
               }}
-            >{opt.text}</button>
+            >
+              {opt.text}
+            </button>
           ))}
         </div>
-        <div style={{display: 'flex', justifyContent: 'flex-start', marginTop: 32}}>
-          <button
-            onClick={() => setCurrent(c => Math.max(0, c - 1))}
-            disabled={current === 0}
-            style={{
-              background: '#f0f0f0',
-              color: '#6b6fa7',
-              border: 'none',
-              borderRadius: 8,
-              padding: '0.7em 1.5em',
-              fontWeight: 600,
-              fontSize: 15,
-              cursor: current === 0 ? 'not-allowed' : 'pointer',
-              opacity: current === 0 ? 0.5 : 1
-            }}
-          >上一题</button>
-        </div>
+        {/* 最后一题完成提示 */}
+        {current === 99 && (
+          <div style={{
+            marginTop: '2rem',
+            textAlign: 'center',
+            color: '#6b6fa7',
+            fontSize: 16,
+            lineHeight: 1.6
+          }}>
+            <p style={{ marginBottom: '1.5rem' }}>恭喜你完成了所有测试题！</p>
+            <button
+              onClick={() => {
+                const mbtiType = calculateMBTIType(answers);
+                router.push(`/result?type=${mbtiType}`);
+              }}
+              style={{
+                background: '#6b6fa7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '1rem 2rem',
+                fontSize: 16,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 4px rgba(107, 111, 167, 0.2)'
+              }}
+            >
+              查看16型性格分析
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

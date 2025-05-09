@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "../../page.module.css";
 import { dog100Questions } from "../../data/dog100Questions";
 
@@ -98,19 +99,63 @@ export default function DogTestPage() {
   const [answers, setAnswers] = useState<number[]>([]);
   const question = dog100Questions[current];
   const dimension = getCurrentDimension(current);
+  const router = useRouter();
 
   // 进度百分比
   const percent = ((current + 1) / 100) * 100;
 
+  // 计算MBTI类型
+  const calculateMBTIType = (answers: number[]) => {
+    const scores = {
+      E: 0, I: 0,
+      S: 0, N: 0,
+      T: 0, F: 0,
+      J: 0, P: 0
+    };
+
+    // 计算每个维度的得分
+    answers.forEach((answer, index) => {
+      const question = dog100Questions[index];
+      const option = question.options[answer];
+      
+      if (index < 25) { // EI维度
+        if (option.value === 'E') scores.E += 1;
+        if (option.value === 'I') scores.I += 1;
+      } else if (index < 50) { // SN维度
+        if (option.value === 'S') scores.S += 1;
+        if (option.value === 'N') scores.N += 1;
+      } else if (index < 75) { // TF维度
+        if (option.value === 'T') scores.T += 1;
+        if (option.value === 'F') scores.F += 1;
+      } else { // JP维度
+        if (option.value === 'J') scores.J += 1;
+        if (option.value === 'P') scores.P += 1;
+      }
+    });
+
+    // 根据得分确定每个维度的类型
+    const type = [
+      scores.E > scores.I ? 'E' : 'I',
+      scores.S > scores.N ? 'S' : 'N',
+      scores.T > scores.F ? 'T' : 'F',
+      scores.J > scores.P ? 'J' : 'P'
+    ].join('');
+
+    return type;
+  };
+
   // 选项点击后自动跳到下一题并记录答案
   const handleOption = (idx: number) => {
-    setAnswers(ans => {
-      const newAns = [...ans];
-      newAns[current] = idx;
-      return newAns;
-    });
+    const newAnswers = [...answers];
+    newAnswers[current] = idx;
+    setAnswers(newAnswers);
+
     if (current < dog100Questions.length - 1) {
       setCurrent(current + 1);
+    } else {
+      // 测试完成，计算MBTI类型并跳转到结果页
+      const mbtiType = calculateMBTIType(newAnswers);
+      router.push(`/result?type=${mbtiType}&testType=dog`);
     }
   };
 
